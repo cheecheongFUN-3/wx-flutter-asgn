@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "186222395105",
+    "project_id": "wxasgn",
+    "storage_bucket": "wxasgn.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:186222395105:android:95c4a7293ae79e3b72c1a0",
+        "android_client_info": {
+          "package_name": "com.example.wx"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfthRxzxtGEU8WThCsb3Gz7iFcf8VqzmY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
