@@ -3,21 +3,22 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'homepage.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter/animation.dart';
 
 List<Map<String, dynamic>> existingAsgn = [
   {
     'id': '1',
-    'title': 'Dummy Assignment 1',
-    'course': 'KQC 7015 MACHINE LEARNING',
-    'description': 'This is a dummy assignment for machine learning.',
-    'deadline': DateTime.utc(2025, 1, 31).toLocal().toString().split(' ')[0],
+    'title': 'User Interface Presentation',
+    'course': 'KQC7015 MACHINE LEARNING',
+    'description': 'This is a dummy assignment for System Analysis and Design.',
+    'deadline': DateTime.utc(2025, 1, 19).toLocal().toString().split(' ')[0],
   },
   {
     'id': '2',
-    'title': 'Dummy Assignment 2',
-    'course': 'KQC 7028 MEMS DESIGN',
-    'description': 'This is a dummy assignment for MEMS design.',
-    'deadline': DateTime.utc(2025, 1, 21).toLocal().toString().split(' ')[0],
+    'title': 'MEMS Prototyping',
+    'course': 'KQC7028 MEMS DESIGN',
+    'description': 'This is a dummy assignment for MEMS Design.',
+    'deadline': DateTime.utc(2025, 1, 31).toLocal().toString().split(' ')[0],
   },
 ];
 
@@ -65,7 +66,8 @@ class DashboardState extends State<Dashboard> {
 
       for (var assignment in existingAsgn) {
         DateTime deadline = DateTime.parse(assignment['deadline']).toLocal();
-        DateTime normalizedDeadline = DateTime.utc(deadline.year, deadline.month, deadline.day);
+        DateTime normalizedDeadline =
+            DateTime.utc(deadline.year, deadline.month, deadline.day);
         String assignmentTitle = assignment['title'];
 
         if (_events[normalizedDeadline] == null) {
@@ -115,7 +117,8 @@ class DashboardState extends State<Dashboard> {
                   color: Colors.black54,
                   child: Center(
                     child: GestureDetector(
-                      onTap: () {}, // Prevents closing when interacting with the form
+                      onTap:
+                          () {}, // Prevents closing when interacting with the form
                       child: Container(
                         width: 400,
                         padding: const EdgeInsets.all(16),
@@ -224,41 +227,112 @@ class DashboardState extends State<Dashboard> {
   }
 
   Widget _buildEventsForSelectedDay() {
-    final dayEvents = _events[_selectedDay];
+  final dayEvents = _events[_selectedDay];
 
-    return SizedBox(
-      width: 300,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 50),
-            child: Text(
-              'Events of The Day:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
+  return SizedBox(
+    width: 300,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 50),
+          child: Text(
+            'Events of The Day:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
-          if (dayEvents != null && dayEvents.isNotEmpty)
-            ...dayEvents.map((event) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    "• $event",
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
+        ),
+        const SizedBox(height: 8),
+        if (dayEvents != null && dayEvents.isNotEmpty)
+          ...dayEvents.map((event) {
+            // Get the corresponding assignment data for the event
+            final assignment = existingAsgn.firstWhere((asgn) => asgn['title'] == event);
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: ExpansionTile(
+                title: Text(
+                  "• $event",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
                   ),
-                ))
-          else
-            const Text(
-              'No events for this day.',
-              style: TextStyle(fontSize: 16, color: Colors.black87),
-            ),
-        ],
-      ),
-    );
-  }
+                ),
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Description: ${assignment['description']}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Course: ${assignment['course']}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Deadline: ${assignment['deadline']}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                expandedAlignment: Alignment.topLeft,
+                backgroundColor: Colors.transparent,
+                iconColor: Colors.blue,
+              ),
+            );
+          })
+        else
+          const Text(
+            'No events for this day.',
+            style: TextStyle(fontSize: 16, color: Colors.black87),
+          ),
+      ],
+    ),
+  );
+}
+
+
 
   Widget _buildUpcomingEventsSection() {
+    final today = DateTime.now();
+
+    // Filter out events with a date that is today or in the future (upcoming events)
+    final upcomingEvents = _events.entries.where((entry) {
+      final eventDate = entry.key;
+      // Include only events in the future
+      return eventDate.isAfter(today);
+    }).toList();
+
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -268,31 +342,58 @@ class DashboardState extends State<Dashboard> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text(
+        children: [
+          const Text(
             'Upcoming Events',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 8),
-          Text('• No upcoming events yet.', style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 8),
+          // Check if there are any upcoming events, then display them
+          if (upcomingEvents.isNotEmpty)
+            ...upcomingEvents.map((entry) {
+              final eventDate = entry.key;
+              final eventsOnDate = entry.value;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '• ${eventDate.toLocal().toString().split(' ')[0]}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  // Display the events for that date
+                  ...eventsOnDate.map((event) => Padding(
+                        padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+                        child: Text(
+                          "  - $event",
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.black54),
+                        ),
+                      )),
+                ],
+              );
+            })
+          else
+            const Text(
+              'No upcoming events yet.',
+              style: TextStyle(fontSize: 16),
+            ),
         ],
       ),
     );
   }
 }
 
-// Add/Edit Assignment Form
 class AddModifyAssignmentForm extends StatefulWidget {
   final Map<String, dynamic>? existingAssignment;
   final VoidCallback onSave;
   final VoidCallback onCancel;
 
   const AddModifyAssignmentForm({
-    Key? key,
+    super.key,
     this.existingAssignment,
     required this.onSave,
     required this.onCancel,
-  }) : super(key: key);
+  });
 
   @override
   _AddModifyAssignmentFormState createState() =>
@@ -305,6 +406,7 @@ class _AddModifyAssignmentFormState extends State<AddModifyAssignmentForm> {
   final _descriptionController = TextEditingController();
   String? _selectedCourse;
   DateTime? _selectedDeadline;
+  String? _selectedAssignment;
 
   @override
   void initState() {
@@ -314,7 +416,8 @@ class _AddModifyAssignmentFormState extends State<AddModifyAssignmentForm> {
       _descriptionController.text =
           widget.existingAssignment!['description'] ?? '';
       _selectedCourse = widget.existingAssignment!['course'];
-      _selectedDeadline = DateTime.parse(widget.existingAssignment!['deadline']);
+      _selectedDeadline =
+          DateTime.parse(widget.existingAssignment!['deadline']);
     }
   }
 
@@ -356,14 +459,38 @@ class _AddModifyAssignmentFormState extends State<AddModifyAssignmentForm> {
       };
 
       if (widget.existingAssignment != null) {
-        final index = existingAsgn.indexWhere(
-            (assignment) => assignment['id'] == widget.existingAssignment!['id']);
+        final index = existingAsgn.indexWhere((assignment) =>
+            assignment['id'] == widget.existingAssignment!['id']);
         if (index != -1) {
           existingAsgn[index] = updatedAssignment;
         }
       } else {
         existingAsgn.add(updatedAssignment);
       }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Assignment saved successfully!',
+            style: TextStyle(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          duration: const Duration(seconds: 4),
+          backgroundColor: Colors.blue,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.fromLTRB(1400, 0, 20, 20),
+          padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 30.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          // Animation configuration
+          animation: CurvedAnimation(
+            parent: ModalRoute.of(context)!.animation!,
+            curve: Curves.easeIn,
+          ),
+          dismissDirection: DismissDirection.vertical,
+        ),
+      );
+
       widget.onSave();
     }
   }
@@ -376,11 +503,48 @@ class _AddModifyAssignmentFormState extends State<AddModifyAssignmentForm> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.existingAssignment == null
-                ? 'Add Assignment'
-                : 'Edit Assignment',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          const Text(
+            'Edit or Add New Assignment',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          DropdownButtonFormField<String>(
+            value: _selectedAssignment,
+            decoration: const InputDecoration(
+              labelText: 'Select Assignment',
+              border: OutlineInputBorder(),
+            ),
+            items: [
+              ...existingAsgn.map((asgn) => DropdownMenuItem(
+                    value: asgn['id'],
+                    child: Text(asgn['title']),
+                  )),
+              const DropdownMenuItem(
+                value: 'new',
+                child: Text('Add New Assignment'),
+              ),
+            ],
+            onChanged: (value) {
+              setState(() {
+                if (value == 'new') {
+                  _selectedAssignment = value;
+                  _titleController.clear();
+                  _descriptionController.clear();
+                  _selectedCourse = null;
+                  _selectedDeadline = null;
+                } else {
+                  _selectedAssignment = value;
+                  final selectedAssignment =
+                      existingAsgn.firstWhere((asgn) => asgn['id'] == value);
+                  _titleController.text = selectedAssignment['title'];
+                  _descriptionController.text =
+                      selectedAssignment['description'];
+                  _selectedCourse = selectedAssignment['course'];
+                  _selectedDeadline =
+                      DateTime.parse(selectedAssignment['deadline']);
+                }
+              });
+            },
           ),
           const SizedBox(height: 16),
           TextFormField(
@@ -404,9 +568,9 @@ class _AddModifyAssignmentFormState extends State<AddModifyAssignmentForm> {
               border: OutlineInputBorder(),
             ),
             items: [
-              'KQC 7015 MACHINE LEARNING',
-              'KQC 7028 MEMS DESIGN',
-              'KQC 7017 SYSTEM ANALYSIS AND DESIGN',
+              'KQC7015 MACHINE LEARNING',
+              'KQC7028 MEMS DESIGN',
+              'KQC7017 SYSTEM ANALYSIS AND DESIGN',
             ].map((course) {
               return DropdownMenuItem(
                 value: course,
@@ -432,7 +596,7 @@ class _AddModifyAssignmentFormState extends State<AddModifyAssignmentForm> {
               labelText: 'Description',
               border: OutlineInputBorder(),
             ),
-            maxLines: 3,
+            maxLines: 4,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter a description';
@@ -440,7 +604,7 @@ class _AddModifyAssignmentFormState extends State<AddModifyAssignmentForm> {
               return null;
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
@@ -448,7 +612,7 @@ class _AddModifyAssignmentFormState extends State<AddModifyAssignmentForm> {
                   onPressed: _pickDeadline,
                   child: Text(_selectedDeadline != null
                       ? 'Deadline: ${_selectedDeadline!.toLocal().toString().split(' ')[0]}'
-                      : 'Pick Deadline'),
+                      : 'Deadline'),
                 ),
               ),
             ],
@@ -467,9 +631,12 @@ class _AddModifyAssignmentFormState extends State<AddModifyAssignmentForm> {
               ElevatedButton(
                 onPressed: _saveAssignment,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.greenAccent, // Green save button
+                  backgroundColor: Colors.lightBlueAccent, // Green save button
                 ),
-                child: const Text('Save'),
+                child: const Text(
+                  'Save',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),

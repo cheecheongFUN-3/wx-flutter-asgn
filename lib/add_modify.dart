@@ -205,7 +205,7 @@ class AddModifyAssignmentState extends State<AddModifyAssignment> {
                                           value: assignment['id'],
                                           child: Text(assignment['title']!),
                                         );
-                                      }).toList(),
+                                      }),
                                       const DropdownMenuItem<String>(
                                         value: 'Add New Assignment',
                                         child: Text('Add New Assignment'),

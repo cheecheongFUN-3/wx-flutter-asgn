@@ -72,16 +72,10 @@ class Homepage extends StatelessWidget {
     return TextButton(
       onPressed: () {
         if (text == 'Home') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => Homepage()),
-          );
+          _navigateToHome(context);
         }
         if (text == 'Dashboard') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Dashboard()),
-          );
+          _navigateToDashboard(context); // Use the custom animation
         }
       },
       child: Text(
@@ -109,7 +103,8 @@ class Homepage extends StatelessWidget {
           return items
               .map((item) => PopupMenuItem<String>(
                     value: item,
-                    child: Text(item, style: const TextStyle(color: Colors.black)),
+                    child:
+                        Text(item, style: const TextStyle(color: Colors.black)),
                   ))
               .toList();
         },
@@ -183,35 +178,26 @@ class Homepage extends StatelessWidget {
       itemBuilder: (BuildContext context) {
         return [
           PopupMenuItem<String>(
-            value: 'message1',
-            child: Row(
-              children: [
+              value: 'message1',
+              child: Row(children: [
                 Icon(LineIcons.user, color: Colors.black),
                 SizedBox(width: 10),
-                Text('John Doe: "Hello, how are you?"'),
-              ],
-            ),
-          ),
+                Text('John Doe: "Hello, how are you?"')
+              ])),
           PopupMenuItem<String>(
-            value: 'message2',
-            child: Row(
-              children: [
+              value: 'message2',
+              child: Row(children: [
                 Icon(LineIcons.user, color: Colors.black),
                 SizedBox(width: 10),
-                Text('Jane Smith: "Don\'t forget to submit your homework."'),
-              ],
-            ),
-          ),
+                Text('Jane Smith: "Don\'t forget to submit your homework."')
+              ])),
           PopupMenuItem<String>(
-            value: 'message3',
-            child: Row(
-              children: [
+              value: 'message3',
+              child: Row(children: [
                 Icon(LineIcons.user, color: Colors.black),
                 SizedBox(width: 10),
-                Text('Admin: "New updates are available."'),
-              ],
-            ),
-          ),
+                Text('Admin: "New updates are available."')
+              ])),
         ];
       },
       constraints: BoxConstraints(maxHeight: 200),
@@ -226,68 +212,47 @@ class Homepage extends StatelessWidget {
       itemBuilder: (BuildContext context) {
         return [
           PopupMenuItem<String>(
-            value: 'accessibility',
-            child: Row(
-              children: [
+              value: 'accessibility',
+              child: Row(children: [
                 Icon(LineIcons.universalAccess, color: Colors.black),
                 SizedBox(width: 10),
-                Text('Accessibility'),
-              ],
-            ),
-          ),
+                Text('Accessibility')
+              ])),
           PopupMenuItem<String>(
-            value: 'calendar',
-            child: Row(
-              children: [
+              value: 'calendar',
+              child: Row(children: [
                 Icon(LineIcons.calendar, color: Colors.black),
                 SizedBox(width: 10),
-                Text('Calendar'),
-              ],
-            ),
-          ),
+                Text('Calendar')
+              ])),
           PopupMenuItem<String>(
-            value: 'courses',
-            child: Row(
-              children: [
+              value: 'courses',
+              child: Row(children: [
                 Icon(LineIcons.book, color: Colors.black),
                 SizedBox(width: 10),
-                Text('Courses'),
-              ],
-            ),
-          ),
+                Text('Courses')
+              ])),
           PopupMenuItem<String>(
-            value: 'preferences',
-            child: Row(
-              children: [
+              value: 'preferences',
+              child: Row(children: [
                 Icon(LineIcons.tools, color: Colors.black),
                 SizedBox(width: 10),
-                Text('Preferences'),
-              ],
-            ),
-          ),
+                Text('Preferences')
+              ])),
           PopupMenuItem<String>(
-            value: 'report',
-            child: Row(
-              children: [
+              value: 'report',
+              child: Row(children: [
                 Icon(LineIcons.fileAlt, color: Colors.black),
                 SizedBox(width: 10),
-                Text('Report'),
-              ],
-            ),
-          ),
+                Text('Report')
+              ])),
           PopupMenuItem<String>(
-            value: 'logout',
-            child: Row(
-              children: [
+              value: 'logout',
+              child: Row(children: [
                 Icon(LineIcons.lock, color: Colors.red),
                 SizedBox(width: 10),
-                Text(
-                  'Log Out',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ],
-            ),
-          ),
+                Text('Log Out', style: TextStyle(color: Colors.red))
+              ])),
         ];
       },
       constraints: BoxConstraints(maxHeight: 300),
@@ -299,13 +264,12 @@ class Homepage extends StatelessWidget {
     final courseBackgrounds = [
       'assets/coursebg1.png',
       'assets/coursebg2.png',
-      'assets/coursebg3.png',
+      'assets/coursebg3.png'
     ];
-
     final courseCode = [
       'KQC 7015 MACHINE LEARNING',
       'KQC 7028 MEMS DESIGN',
-      'KQC 7017 SYSTEM ANALYSIS AND DESIGN',
+      'KQC 7017 SYSTEM ANALYSIS AND DESIGN'
     ];
 
     return Padding(
@@ -321,23 +285,15 @@ class Homepage extends StatelessWidget {
         ),
         itemCount: 3,
         itemBuilder: (context, index) {
-          return courseCard(
-            context,
-            courseCode[index],
-            'Faculty of Engineering',
-            courseBackgrounds[index],
-          );
+          return courseCard(context, courseCode[index],
+              'Faculty of Engineering', courseBackgrounds[index]);
         },
       ),
     );
   }
 
-  Widget courseCard(
-    BuildContext context,
-    String name,
-    String faculty,
-    String backgroundImage,
-  ) {
+  Widget courseCard(BuildContext context, String name, String faculty,
+      String backgroundImage) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -351,7 +307,8 @@ class Homepage extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(8)),
                     image: DecorationImage(
                       image: AssetImage(backgroundImage),
                       fit: BoxFit.cover,
@@ -403,17 +360,20 @@ class Homepage extends StatelessWidget {
                       icon: Icon(Icons.more_vert, color: Colors.black),
                       onSelected: (value) {
                         if (value == 'add_assignment') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const Dashboard()),
-                          );
+                          _navigateToDashboard(
+                              context); // Use the custom animation
                         }
                       },
                       itemBuilder: (context) => [
-                        PopupMenuItem(value: 'add_assignment', child: Text('Add Assignment')),
+                        PopupMenuItem(
+                            value: 'add_assignment',
+                            child: Text('Add Assignment')),
                         PopupMenuItem(value: 'grading', child: Text('Grading')),
-                        PopupMenuItem(value: 'attendance', child: Text('Attendance')),
-                        PopupMenuItem(value: 'reschedule', child: Text('Reschedule Class')),
+                        PopupMenuItem(
+                            value: 'attendance', child: Text('Attendance')),
+                        PopupMenuItem(
+                            value: 'reschedule',
+                            child: Text('Reschedule Class')),
                       ],
                     ),
                   ],
@@ -450,5 +410,55 @@ class Homepage extends StatelessWidget {
       ),
     );
   }
+
+// Custom transition animation
+  void _navigateToDashboard(BuildContext context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const Dashboard(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var offsetAnimation = animation.drive(tween);
+
+          return FadeTransition(
+            opacity: animation, // Fade effect
+            child: SlideTransition(
+                position: offsetAnimation, child: child), // Slide effect
+          );
+        },
+      ),
+    );
+  }
 }
 
+// Custom transition animation for Dashboard to Home
+void _navigateToHome(BuildContext context) {
+  Navigator.pushReplacement(
+    context,
+    PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => const Homepage(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(-1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.easeInOut;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+
+        return FadeTransition(
+          opacity: animation, // Fade effect
+          child: SlideTransition(
+              position: offsetAnimation, child: child), // Slide effect
+        );
+      },
+    ),
+  );
+}
